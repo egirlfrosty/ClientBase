@@ -31,7 +31,7 @@ public class MainMenu extends UIScreen {
 
     @Override
     public void mousePressed(float mouseX, float mouseY, int button) {
-        if (this.singleplayer.mouseInside(mouseX, mouseY)) { //This should really use a switch case.
+        if (this.singleplayer.mouseInside(mouseX, mouseY)) { 
             this.mc.displayGuiScreen(new GuiSelectWorld(this.mc.currentScreen));
         } else if (this.multiplayer.mouseInside(mouseX, mouseY)) {
             this.mc.displayGuiScreen(new GuiMultiplayer(this.mc.currentScreen));
