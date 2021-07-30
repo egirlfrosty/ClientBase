@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "compatibilityLevel": "JAVA_8",
+  "verbose": true,
+  "package": "me.frosty.client.mixin.impl",
+  "mixins": [
+    "MixinGuiIngame",
+    "MixinGuiMainMenu",
+    "MixinMinecraft"
+  ]
+}

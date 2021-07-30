@@ -1,0 +1,107 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = 'sponge'
+            url = 'https://repo.spongepowered.org/maven'
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle.tweaker-client'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'java'
+
+version = "1.0"
+group= "me.frosty"
+archivesBaseName = "Client"
+
+sourceCompatibility = targetCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
+
+minecraft {
+    version = "1.8.9"
+    tweakClass = "me.frosty.client.mixin.Tweaker"
+    runDir = "run"
+    mappings = "stable_20"
+    makeObfSourceJar = false
+}
+
+repositories {
+    maven { url "https://jitpack.io" }
+    maven {
+        name = 'sponge'
+        url = 'https://repo.spongepowered.org/maven/'
+    }
+    mavenCentral()
+    jcenter()
+}
+
+configurations {
+    embed
+    compile.extendsFrom(embed)
+}
+
+dependencies {
+    embed('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
+        exclude module: 'launchwrapper'
+        exclude module: 'guava'
+        exclude module: 'gson'
+        exclude module: 'commons-io'
+    }
+
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.20'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+    compile('org.spongepowered:mixin:0.7.11-SNAPSHOT')
+}
+
+mixin {
+    defaultObfuscationEnv notch
+    add sourceSets.main, "mixins.tecknix.refmap.json"
+}
+
+processResources {
+    inputs.files "src/main/resources"
+    outputs.dir "build/classes/main"
+    copy {
+        from("src/main/resources")
+        into("build/classes/main")
+    }
+}
+
+jar {
+    dependsOn configurations.compile
+    from {
+        configurations.embed.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+}
+
+jar {
+    manifest.attributes(
+            "MixinConfigs": 'mixins.client.json',
+            "TweakClass": "me.frosty.client.mixin.Tweaker",
+            "TweakOrder": 0,
+            "Manifest-Version": 1.0
+    )
+
+    configurations.embed.each { dep ->
+        from(project.zipTree(dep)) {
+            exclude 'META-INF', 'META-INF/**'
+        }
+    }
+}
