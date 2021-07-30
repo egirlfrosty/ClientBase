@@ -1,5 +1,5 @@
 # ClientBase
-A simple mixin client base for begginers.
+A simple mixin client base for beginners.
 
 I made this via a video on youtube in around 20 minutes.
 https://www.youtube.com/watch?v=QN1oiW2rY3g
